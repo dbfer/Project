@@ -1,11 +1,11 @@
 -----------------------------------------------------------------------------
 -- |
--- Module      :  CSVUtils
+-- Module      :  CSVUsers
 -- Copyright   :  (c) Domagoj Begusic
 --
 -----------------------------------------------------------------------------
 
-module CSVUtils (User(..),
+module CSVUsers (User(..),
                  UserIdentifier,
                  Role(..),
                  splitString,
@@ -39,44 +39,41 @@ data User = User {
  role :: Role
   } deriving (Eq, Show)
 
--- | Splits string at given separator.
+-- | Splits string at a given separator.
 splitString :: String -> String -> [String]
-splitString sep = words . f "" sep
- where f :: String -> String -> String -> String
-       f i sep ""     = i
-       f i sep (x:xs)
-        | [x]==sep    = f (i++" ") sep xs
-        | otherwise   = f (i++[x]) sep xs
+splitString sep = words . map (\x -> if [x]==sep then ' ' else x)
 
 -- * Implementation
 
 -- | Converts User data to string.
-userToString :: User -> String
-userToString user@(User a b c d) = a++sep++b++sep++c++sep++show d
- where sep = ";"
+userToString :: User -> Separator -> String
+userToString (User a b c d) sep = a++sep++b++sep++c++sep++show d
 
 -- | Converts string to User data.
-stringToUser :: String -> User
-stringToUser xs = User a b c (read $ unwords d)
- where (a:b:c:d) = splitString ";" xs
+stringToUser :: String -> Separator -> User
+stringToUser xs sep = User a b c (read $ unwords d)
+ where (a:b:c:d)    = splitString sep xs
 
 -- | Parses CSV from Document.
 parseCSV :: Separator -> Document -> CSV
 parseCSV sep doc
  | not $ elem (head sep) doc = error ("The separator '"++sep++"' does not occur in the text")
- | otherwise = [stringToUser userstring | userstring <- tail $ lines doc]
+ | otherwise = map (\x -> stringToUser x sep) $ lines doc
 
 -- | Shows CSV in form of a Document.
 showCSV :: Separator -> CSV -> Document
-showCSV sep csv = init $ unlines [ userToString user | user <- csv]
+showCSV sep [] = ""
+showCSV sep xs = init $ unlines $ map (\x -> userToString x sep) xs
 
 -- | Reads CSV from a file.
 readCSV :: Separator -> FilePath -> IO CSV
 readCSV sep path = do
  doc <- readFile path
- return $ parseCSV sep doc
+ if doc==""
+  then return []
+  else return $ parseCSV sep doc
 
 -- | Writes CSV to a file.
 writeCSV :: Separator -> FilePath -> CSV -> IO ()
 writeCSV sep path csv = do
- writeFile path $ "IDENTIFIER;EMAIL;PASSWORD;ROLE\n" ++ (showCSV sep csv)
+ writeFile path (showCSV sep csv)
