@@ -1,5 +1,6 @@
 Hello {firstName}
 
+This is an example of “if statement”:
 @if(True)
 
 Condition passed!
