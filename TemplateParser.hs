@@ -84,14 +84,14 @@ convToExpr mp ["False"] = Val False
 convToExpr mp [x]
  | flag=="True" = convToExpr mp ["True"]
  | flag=="False" = convToExpr mp ["False"]
- | otherwise = error "Undefined function in if statement!"
  where flag = ifKeyfindValue mp x
 convToExpr mp (x:xs)
  | x=="Or"   = Or  (convToExpr mp [(head xs)]) (convToExpr mp (tail xs))
  | x=="And"  = And (convToExpr mp [(head xs)]) (convToExpr mp (tail xs))
  | x=="Not"  = Not (convToExpr mp (tail xs))
  | head x=='(' && last x==')' = convToExpr mp $ myWords $ tail $ init $ x
-convToExpr mp _ = error "Invalid condition in if statement!"
+ | otherwise = error "Undefined variable in if statement!"
+convToExpr mp _ = error "Invalid variable in if statement!"
 
 -- | Parses "if statement" condition; converts to boolean expression and evaluates it.
 parseIF :: Map String String -> String -> Bool

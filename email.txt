@@ -1,0 +1,19 @@
+Hello {firstName}
+
+@if(True)
+
+Condition passed!
+Message number one.
+
+*example*
+
+@else
+Condition failed!
+
+Message number two.
+write1whatever2you3want
+
+@endif
+
+Regards,
+{authorName}
