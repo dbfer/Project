@@ -19,7 +19,7 @@
     * Create your own variables and their values and store them in configuration file
     * Example: {firstName} -> David, {authorName} -> Joseph, *variable* -> True, something -> somethingelse
     * Use if statements with basic boolean functions
-    * <i>Arguments can be varaibles or even functions so this will work too:</i> <b>@if(And_(Or_True_*variable*)_False)</b>
+    * <i>Arguments can be variables or even functions so this will work too:</i> <b>@if(And_(Or_True_*variable*)_False)</b>
 
 | Operator | Function      |
 | ---      | ------------- |
